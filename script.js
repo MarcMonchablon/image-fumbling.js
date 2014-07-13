@@ -16,8 +16,8 @@
 
 	    context.drawImage(image, 0, 0);
 
-	    var processedImage = processImage(context, canvas.width, canvas.height);
-	    context.putImageData(processedImage, 0, 0);
+//	    var processedImage = processImage(context, canvas.width, canvas.height);
+//	    context.putImageData(processedImage, 0, 0);
 	}
     }
 

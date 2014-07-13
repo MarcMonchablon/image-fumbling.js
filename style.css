@@ -1,0 +1,47 @@
+body {
+    background: url("materials/congruent_outline.png");
+}
+
+h1 {
+    margin-left : 930px;
+    font-family : "URW Gothic L", "Bitstream Charter";
+    font-style : italic;
+    font-weight : lighter;
+    color : #FF530D;
+    text-shadow : #99583D 2px 2px 1px;
+}
+
+.canvasWrapper {
+    border : 1px solid #333333;
+    position : absolute;
+    width: 800px;
+    height : 500px;
+    left : 10px;
+    top : 20px;
+}
+
+.infoZone {
+    position : absolute;
+    width : 500px;
+    left : 830px;
+    top : 70px;
+    
+    padding : 5px;
+    background: rgba(20, 20, 20, 0.4);
+    
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border : rgba(20, 20, 20, 0.6) solid 2px;
+}
+
+.infoZone p {
+    color: #FF8959;
+    font-family : "URW Gothic L";
+    font-style : normal;
+}
+
+.infoZone p em {
+    font-style : normal;
+    font-weight : bold;
+}
