@@ -16,8 +16,8 @@
 
 	    context.drawImage(image, 0, 0);
 
-//	    var processedImage = processImage(context, canvas.width, canvas.height);
-//	    context.putImageData(processedImage, 0, 0);
+	    var processedImage = processImage(context, canvas.width, canvas.height);
+	    context.putImageData(processedImage, 0, 0);
 	}
     }
 
@@ -28,7 +28,8 @@
 						  width,
 						  height);
 
-	return processImage_SobelFilter(context, inputImage.data, width, height);
+//	return processImage_SobelFilter(context, inputImage.data, width, height);
+	return processImage_BlurImage(context, inputImage.data, width, height);
     }
 
     function getPixel(inputData, x, y, width, height)
@@ -70,6 +71,53 @@
 			 height);
 	    }
 	}
+    }
+
+    function processImage_BlurImage(context, inputData, width, height)
+    {
+	var linearFilter = [1/9, 1/9, 1/9,
+			    1/9, 1/9, 1/9,
+			    1/9, 1/9, 1/9];
+
+	return processImage_LinearFilter(linearFilter, context, inputData, width, height);
+    }
+    
+    function processImage_LinearFilter(linearFilter, context, inputData, width, height)
+    {
+	function getLocalConvolutionValue(x, y, linearFilter, inputData, filterPadding, width, height)
+	{
+	    var pixelValue = 0;
+	    var indexInFilter = 0;
+	    
+	    var x_filter, y_filter, localPixelValue;
+	    for (y_filter=-filterPadding; y_filter<=filterPadding; y_filter++) {
+		for (x_filter=-filterPadding; x_filter<=filterPadding; x_filter++) {
+		    localPixelValue = getPixel(inputData, x+x_filter, y+y_filter, width, height);
+		    pixelValue += linearFilter[indexInFilter++] *
+			getLuminanceOfPixel(localPixelValue);
+		}
+	    }
+	    return pixelValue;
+	}
+
+	var outputImage = context.createImageData(width, height);
+	var outputData = outputImage.data;
+
+	var filterSize = Math.sqrt(linearFilter.length);
+	var filterPadding = Math.floor(filterSize / 2);
+
+	fillImage([0, 0, 0, 255], outputData, width, height);
+	
+	var y, x, grayPixelValue; 
+	for (y=filterPadding; y<height-filterPadding; y++) {
+	    for (x=filterPadding; x<width-filterPadding; x++) {
+		grayPixelValue = getLocalConvolutionValue(x, y, linearFilter, inputData, filterPadding, width, height);
+		setPixel([grayPixelValue, grayPixelValue, grayPixelValue, 255],
+			outputData, x, y, width, height);
+	    }
+	}
+	
+	return outputImage;
     }
     
     function processImage_SobelFilter(context, inputData, width, height)
