@@ -16,18 +16,48 @@
 
 	    context.drawImage(image, 0, 0);
 
-	    var processedImage = processImage(context, canvas.width, canvas.height);
-	    context.putImageData(processedImage, 0, 0);
+//	    var processedImage = processImage(context, canvas.width, canvas.height);
+//	    context.putImageData(processedImage, 0, 0);
 	}
     }
 
+    function getHistogram(imageData, width, height)
+    {
+	var histogram = [];
+
+	var i, x, y;
+	for (i=0; i<256; i++) {
+	    histogram[i] = 0;
+	}
+
+	var pixelLuminance;
+	for (y=0; y<height; y++) {
+	    for (x=0; x<width; x++) {
+		pixelLuminance = Math.floor(getLuminanceOfPixel(getPixel(imageData, x, y, width, height)));
+		histogram[pixelLuminance]++;
+	    }
+	}
+	return histogram;
+    }
+
+    function getNormalizedHistogram(imageData, width, height)
+    {
+	var histogram = getHistogram(imageData, width, heigth);
+	var pixelNumber = width * height;
+
+	for (var i=0; i<256; i++) {
+	    histogram[i] /= pixelNumber;
+	}
+	return histogram;
+    }
+    
     function processImage(context, width, height)
     {
 	var inputImage  = context.getImageData(0,
-						  0,
-						  width,
-						  height);
-
+					       0,
+					       width,
+					       height);
+	
 //	return processImage_SobelFilter(context, inputImage.data, width, height);
 	return processImage_BlurImage(context, inputImage.data, width, height);
     }
@@ -186,7 +216,6 @@
 	    {
 		var i = (y*width + x)*4;
 
-		// Take the negatives (and keep alpha's unchanged)
 		outputData[i] = 255 - inputData[i];
 		outputData[i+1] = 255 - inputData[i+1];
 		outputData[i+2] = 255 - inputData[i+2];
