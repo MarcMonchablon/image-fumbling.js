@@ -21,6 +21,17 @@
 	}
     }
 
+    function processImage(context, width, height)
+    {
+	var inputImage  = context.getImageData(0,
+					       0,
+					       width,
+					       height);
+	
+//	return processImage_SobelFilter(context, inputImage.data, width, height);
+	return processImage_BlurImage(context, inputImage.data, width, height);
+    }
+    
     function getHistogram(imageData, width, height)
     {
 	var histogram = [];
@@ -49,17 +60,6 @@
 	    histogram[i] /= pixelNumber;
 	}
 	return histogram;
-    }
-    
-    function processImage(context, width, height)
-    {
-	var inputImage  = context.getImageData(0,
-					       0,
-					       width,
-					       height);
-	
-//	return processImage_SobelFilter(context, inputImage.data, width, height);
-	return processImage_BlurImage(context, inputImage.data, width, height);
     }
 
     function getPixel(inputData, x, y, width, height)
