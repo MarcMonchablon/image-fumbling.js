@@ -1,11 +1,53 @@
 (function() {
     "use strict";
 
+    var $ = require('jquery');    
+    var ndarray = require('ndarray');
+    var render = require('ndarray-canvas');
+    var read = require('get-pixels');
+    var zeros = require('zeros');
+    var imageRotate = require("image-rotate");
     var imageUtils = require('./utils/imageUtils.js');
     var linearProcessing = require('./processing/linearProcessing.js');
 
     window.onload = function() {
-	drawImage();
+	var path = "images/DogBeach.jpg";
+	var nd_originalImage;
+
+	read(path, function(err, nd_originalImage) {
+	    if (err) {
+		console.log("Bad image path");
+		return;
+	    }
+	    
+	    console.log("got pixels", nd_originalImage.shape.slice());	    
+
+	    var nd_modifiedImage = zeros([nd_originalImage._shape1,
+					  nd_originalImage._shape0,
+					  nd_originalImage._shape2]);
+
+	    imageRotate(nd_modifiedImage.pick(null, null, 0),
+			nd_originalImage.pick(null, null, 0),
+			Math.PI / 2.0);
+
+	    imageRotate(nd_modifiedImage.pick(null, null, 1),
+			nd_originalImage.pick(null, null, 1),
+			Math.PI / 2.0);
+
+	    imageRotate(nd_modifiedImage.pick(null, null, 2),
+			nd_originalImage.pick(null, null, 2),
+			Math.PI / 2.0);
+
+	    var canvas = render(null,
+				nd_modifiedImage.pick(null, null, 0),
+				nd_modifiedImage.pick(null, null, 1),
+				nd_modifiedImage.pick(null, null, 2));
+	    
+	    var canvasWrapper = $('.canvasWrapper');
+	    canvasWrapper.empty();
+	    canvasWrapper.append(canvas);
+	});
+
     };
     
     function drawImage() {
@@ -23,7 +65,7 @@
 	    context.putImageData(processedImage, 0, 0);
 	}
     }
-
+    
     function processImage(context, width, height)
     {
 	var inputImage  = context.getImageData(0,
