@@ -3,6 +3,7 @@
 
     var $ = require('jquery');    
     var ndarray = require('ndarray');
+    var ops = require('ndarray-ops');
     var render = require('ndarray-canvas');
     var read = require('get-pixels');
     var zeros = require('zeros');
@@ -14,34 +15,39 @@
 	var path = "images/DogBeach.jpg";
 	var nd_originalImage;
 
+
 	read(path, function(err, nd_originalImage) {
 	    if (err) {
 		console.log("Bad image path");
 		return;
 	    }
 	    
-	    console.log("got pixels", nd_originalImage.shape.slice());	    
+
+	    var red = nd_originalImage.pick(null, null, 0);
+	    var green = nd_originalImage.pick(null, null, 1);
+	    var blue = nd_originalImage.pick(null, null, 2);
 
 	    var nd_modifiedImage = zeros([nd_originalImage._shape1,
-					  nd_originalImage._shape0,
-					  nd_originalImage._shape2]);
+					  nd_originalImage._shape0]);
 
-	    imageRotate(nd_modifiedImage.pick(null, null, 0),
-			nd_originalImage.pick(null, null, 0),
+	    //   CIE luminance of RGB
+	    //  Red * 0.2126
+	    // Green * 0.7152
+	    //Blue  * 0.0722
+
+	    ops.add(nd_modifiedImage,
+		    ops.mulseq(red, 0.2126),
+		    ops.mulseq(green, 0.7152));
+	    ops.add(nd_modifiedImage,
+		    nd_modifiedImage,
+		   ops.mulseq(blue, 0.0722));
+
+
+	    imageRotate(nd_modifiedImage,
+			nd_originalImage,
 			Math.PI / 2.0);
 
-	    imageRotate(nd_modifiedImage.pick(null, null, 1),
-			nd_originalImage.pick(null, null, 1),
-			Math.PI / 2.0);
-
-	    imageRotate(nd_modifiedImage.pick(null, null, 2),
-			nd_originalImage.pick(null, null, 2),
-			Math.PI / 2.0);
-
-	    var canvas = render(null,
-				nd_modifiedImage.pick(null, null, 0),
-				nd_modifiedImage.pick(null, null, 1),
-				nd_modifiedImage.pick(null, null, 2));
+	    var canvas = render(null, nd_modifiedImage);
 	    
 	    var canvasWrapper = $('.canvasWrapper');
 	    canvasWrapper.empty();
