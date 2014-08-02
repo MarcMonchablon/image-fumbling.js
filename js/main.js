@@ -36,11 +36,11 @@
 	    //Blue  * 0.0722
 
 	    ops.add(nd_modifiedImage,
-		    ops.mulseq(red, 0.2126),
-		    ops.mulseq(green, 0.7152));
+		    ops.mulseq(red, 1),
+		    ops.mulseq(green, 1));
 	    ops.add(nd_modifiedImage,
 		    nd_modifiedImage,
-		   ops.mulseq(blue, 0.0722));
+		   ops.mulseq(blue, 1));
 
 
 	    imageRotate(nd_modifiedImage,
