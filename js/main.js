@@ -8,24 +8,25 @@
     var read = require('get-pixels');
     var zeros = require('zeros');
     var imageUtils = require('./utils/imageUtils.js');
-
+    var seamCarving = require('./seamCarving/seamCarving.js');
+    
     window.onload = function() {
-	var path = "images/DogBeach.jpg";
-
-	read(path, function(err, nd_originalImage) {
+	var pathDog = "images/DogBeach.jpg";
+	var pathWave = "images/WaveHokusai.jpg";
+	
+	read(pathWave, function(err, nd_originalImage) {
 	    if (err) {
 		console.log("Bad image path");
 		return;
 	    }
 	    onSuccessfullImageLoading(nd_originalImage);
 	});
-
     };
 
     function onSuccessfullImageLoading(originalImage)
     {	
 	var grayImage = convertToGrayImage(originalImage);
-	var processedImage = processImage(grayImage);
+	var processedImage = seamCarving(grayImage);
 	drawImage(processedImage);
     }
 
